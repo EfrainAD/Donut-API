@@ -29,7 +29,7 @@ const router = express.Router()
 
 // INDEX
 // GET /donuts
-router.get('/donuts', requireToken, (req, res, next) => {
+router.get('/donuts', (req, res, next) => {
 	Donut.find()
 		.then((donuts) => {
 			// `donuts` will be an array of Mongoose documents
@@ -45,7 +45,8 @@ router.get('/donuts', requireToken, (req, res, next) => {
 
 // SHOW
 // GET /donuts/5a7db6c74d55bc51bdf39793
-router.get('/donuts/:id', requireToken, (req, res, next) => {
+// Need to add back requireToken
+router.get('/donuts/:id', (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Donut.findById(req.params.id)
 		.then(handle404)
@@ -57,8 +58,13 @@ router.get('/donuts/:id', requireToken, (req, res, next) => {
 
 // CREATE
 // POST /donuts
+// requireToken
 router.post('/donuts', requireToken, (req, res, next) => {
 	// set owner of new donut to be current user
+	// CLEANUP
+	console.log('req: ', req)
+	console.log('req.body.donut: ', req.body.donut)
+	console.log('req.user: ', req.user)
 	req.body.donut.owner = req.user.id
 
 	Donut.create(req.body.donut)
@@ -97,6 +103,7 @@ router.patch('/donuts/:id', requireToken, removeBlanks, (req, res, next) => {
 
 // DESTROY
 // DELETE /donuts/5a7db6c74d55bc51bdf39793
+// router.delete('/donuts/:id', (req, res, next) => {
 router.delete('/donuts/:id', requireToken, (req, res, next) => {
 	Donut.findById(req.params.id)
 		.then(handle404)
